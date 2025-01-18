@@ -5,7 +5,7 @@ from composio_phidata import Action, ComposioToolSet
 import os
 from phi.tools.arxiv_toolkit import ArxivToolkit
 from phi.utils.pprint import pprint_run_response
-from phi.tools.serpapi_tools import SerpApiTools
+from phi.tools.tavily_tools import TavilyTools
 
 # Set page configuration
 st.set_page_config(page_title="👨‍🏫 AI Teaching Agent Team", layout="centered")
@@ -15,8 +15,8 @@ if 'openai_api_key' not in st.session_state:
     st.session_state['openai_api_key'] = ''
 if 'composio_api_key' not in st.session_state:
     st.session_state['composio_api_key'] = ''
-if 'serpapi_api_key' not in st.session_state:
-    st.session_state['serpapi_api_key'] = ''
+if 'tavily_api_key' not in st.session_state:
+    st.session_state['tavily_api_key'] = ''
 if 'topic' not in st.session_state:
     st.session_state['topic'] = ''
 
@@ -25,14 +25,14 @@ with st.sidebar:
     st.title("API Keys Configuration")
     st.session_state['openai_api_key'] = st.text_input("Enter your OpenAI API Key", type="password").strip()
     st.session_state['composio_api_key'] = st.text_input("Enter your Composio API Key", type="password").strip()
-    st.session_state['serpapi_api_key'] = st.text_input("Enter your SerpAPI Key", type="password").strip()
+    st.session_state['tavily_api_key'] = st.text_input("Enter your Tavily API Key", type="password").strip()
     
     # Add info about terminal responses
     st.info("Note: You can also view detailed agent responses\nin your terminal after execution.")
 
 # Validate API keys
-if not st.session_state['openai_api_key'] or not st.session_state['composio_api_key'] or not st.session_state['serpapi_api_key']:
-    st.error("Please enter OpenAI, Composio, and SerpAPI keys in the sidebar.")
+if not st.session_state['openai_api_key'] or not st.session_state['composio_api_key'] or not st.session_state['tavily_api_key']:
+    st.error("Please enter OpenAI, Composio, and Tavily keys in the sidebar.")
     st.stop()
 
 # Set the OpenAI API key and Composio API key from session state
@@ -85,7 +85,7 @@ research_librarian_agent = Agent(
     name="Research Librarian",
     role="Learning Resource Specialist",
     model=OpenAIChat(id="gpt-4o-mini", api_key=st.session_state['openai_api_key']),
-    tools=[google_docs_tool, SerpApiTools(api_key=st.session_state['serpapi_api_key']) ],
+    tools=[google_docs_tool, TavilyTools(api_key=st.session_state['tavily_api_key']) ],
     instructions=[
         "Make a list of high-quality learning resources for the given topic.",
         "Use the SerpApi search tool to find current and relevant learning materials.",
@@ -102,7 +102,7 @@ teaching_assistant_agent = Agent(
     name="Teaching Assistant",
     role="Exercise Creator",
     model=OpenAIChat(id="gpt-4o-mini", api_key=st.session_state['openai_api_key']),
-    tools=[google_docs_tool, SerpApiTools(api_key=st.session_state['serpapi_api_key'])],
+    tools=[google_docs_tool, TavilyTools(api_key=st.session_state['tavily_api_key'])],
     instructions=[
         "Create comprehensive practice materials for the given topic.",
         "Use the SerpApi search tool to find example problems and real-world applications.",

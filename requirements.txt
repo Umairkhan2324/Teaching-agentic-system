@@ -1,5 +1,6 @@
 streamlit
 openai
+tavily-python
 duckduckgo-search
 typing-extensions
 phidata
